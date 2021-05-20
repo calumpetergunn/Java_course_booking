@@ -11,4 +11,6 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 
     List<Course> findByBookingsCustomerCustomerNameIgnoreCase(String courseName);
 
+    List<Course> findAllByBookingsCustomerId(Long customerId);
+
 }

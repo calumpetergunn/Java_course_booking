@@ -1,14 +1,13 @@
 package com.codeclan.example.coursebooking.controllers;
 
+import com.codeclan.example.coursebooking.models.Course;
 import com.codeclan.example.coursebooking.models.Customer;
+import com.codeclan.example.coursebooking.repositories.CourseRepository;
 import com.codeclan.example.coursebooking.repositories.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -17,6 +16,8 @@ public class CustomerController {
 
     @Autowired
     CustomerRepository customerRepository;
+    @Autowired
+    CourseRepository courseRepository;
 
     @GetMapping(value="/customers")
     public ResponseEntity<List<Customer>> getAllCustomersAndFilters(
@@ -40,5 +41,33 @@ public class CustomerController {
     @GetMapping(value="/customers/{id}")
     public ResponseEntity getCustomer(@PathVariable Long id){
         return new ResponseEntity<>(customerRepository.findById(id), HttpStatus.OK);
+    }
+
+    @PostMapping("/customers")
+    public ResponseEntity<Customer> postCustomer(@RequestBody Customer customer){
+        customerRepository.save(customer);
+        return new ResponseEntity<>(customer, HttpStatus.CREATED);
+    }
+
+    @PutMapping(value="/{id}")
+    public ResponseEntity<Customer> putCustomer(@RequestBody Customer customer, @PathVariable Long id){
+        Customer foundCustomer = customerRepository.findById(id).get();
+        foundCustomer.setCustomerName(customer.getCustomerName());
+        foundCustomer.setAge(customer.getAge());
+        foundCustomer.setBookings(customer.getBookings());
+        foundCustomer.setTown(customer.getTown());
+        customerRepository.save(foundCustomer);
+        return new ResponseEntity<>(foundCustomer, HttpStatus.OK);
+    }
+
+    @DeleteMapping(value="/{id}")
+    public ResponseEntity<Long> deleteCustomer(@PathVariable Long id){
+        customerRepository.deleteById(id);
+        return new ResponseEntity<>(id, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/customers/{customerId}/courses")
+    public ResponseEntity<List<Course>> getCoursesForCustomer(@PathVariable Long customerId) {
+        return new ResponseEntity<>(courseRepository.findAllByBookingsCustomerId(customerId), HttpStatus.OK);
     }
 }
