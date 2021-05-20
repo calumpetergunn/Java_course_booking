@@ -24,9 +24,8 @@ public class Customer {
     @Column(name="age")
     private int age;
 
-    @OneToMany
-    @JoinColumn(name = "booking", nullable = false)
-    @JsonIgnoreProperties({"customers"})
+    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"customer"})
     private List<Booking> bookings;
 
     public Customer(String customerName, String town, int age){

@@ -24,9 +24,8 @@ public class Course {
     @Column(name="rating")
     private int rating;
 
-    @OneToMany
-    @JoinColumn(name = "booking", nullable = false)
-    @JsonIgnoreProperties({"courses"})
+    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"course"})
     private List<Booking> bookings;
 
     public Course(String courseName, String town, int rating) {
